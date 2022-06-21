@@ -6,8 +6,8 @@ const PORT = process.env.PORT || 3000;
 const app = express(); // init express
 
 app.get('/', (req, res) => { // handle GET requests at '/'
-    let from = req.params['from'];
-    let authorized = req.params['magic'] === process.env.magic;
+    const { from, magic } = req.params;
+    let authorized = magic === process.env.magic;
     res.send(`Hello World! -> authorized: ${authorized}, from: ${from}`);
 })
 
