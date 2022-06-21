@@ -1,0 +1,19 @@
+{
+  "name": "cpg_backend",
+  "version": "1.0.0",
+  "description": "Cyprus Pharmacy Guide - backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nearchos/cpg_backend.git"
+  },
+  "author": "Nearchos Paspallis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nearchos/cpg_backend/issues"
+  },
+  "homepage": "https://github.com/nearchos/cpg_backend#readme"
+}
