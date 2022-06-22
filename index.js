@@ -6,9 +6,9 @@ const { auth } = require('express-openid-connect');
 const config = {
   authRequired: false,
   auth0Logout: true,
-  secret: process.env.secret,
-  baseURL: process.env.HOST,
-  clientID: '0Z70LaAOMYZKlr7WtPuq8UWm6gjHhCKT',
+  secret: process.env.AUTH0_CLIENT_SECRET,
+  baseURL: process.env.AUTH0_DOMAIN,
+  clientID: process.env.AUTH0_CLIENT_ID,
   issuerBaseURL: 'https://dev-tbyavmwl.us.auth0.com'
 };
 
@@ -18,7 +18,7 @@ const app = express(); // init express
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(express.static(path.join(__dirname, 'images')));
-// app.use(auth(config));
+app.use(auth(config));
 app.use(express.json({limit: '2mb'}));
 app.set('view engine', 'ejs'); // set the view engine to ejs
 
