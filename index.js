@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 const app = express(); // init express
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
-app.use(express.static('images'))
+app.use(express.static(path.join(__dirname, 'images')));
 app.use(auth(config));
 app.use(express.json({limit: '2mb'}));
 app.set('view engine', 'ejs'); // set the view engine to ejs
