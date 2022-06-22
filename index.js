@@ -7,7 +7,7 @@ const config = {
   authRequired: false,
   auth0Logout: true,
   secret: process.env.secret,
-  baseURL: process.env.AUTH0_BASE_URL,
+  baseURL: process.env.HOST,
   clientID: '0Z70LaAOMYZKlr7WtPuq8UWm6gjHhCKT',
   issuerBaseURL: 'https://dev-tbyavmwl.us.auth0.com'
 };
