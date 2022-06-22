@@ -7,9 +7,9 @@ const config = {
   authRequired: false,
   auth0Logout: true,
   secret: process.env.AUTH0_CLIENT_SECRET,
-  baseURL: process.env.AUTH0_DOMAIN,
+  baseURL: process.env.AUTH0_BASE_URL,
   clientID: process.env.AUTH0_CLIENT_ID,
-  issuerBaseURL: 'https://dev-tbyavmwl.us.auth0.com'
+  issuerBaseURL: process.env.AUTH0_DOMAIN
 };
 
 const PORT = process.env.PORT || 3000;
