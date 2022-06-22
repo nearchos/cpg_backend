@@ -1,0 +1,121 @@
+<html>
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+
+<body>
+
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <h1>Pharmacies</h1>
+
+    <ul>
+        <% 
+        let cityUuidToCityMap = {};
+        cities.forEach(city => cityUuidToCityMap[city.uuid] = city);
+        let localityUuidToLocalityMap = {};
+        localities.forEach(locality => localityUuidToLocalityMap[locality.uuid] = locality);
+        %>
+      </ul>
+
+
+    <table border="1">
+        <tr>
+            <th>Created at</th>
+            <th>Updated at</th>
+            <th>ID</th>
+            <th>Name (EN)</th>
+            <th>Address</th>
+            <th>Postal Code</th>
+            <th>Address Details</th>
+            <th>Coordinates</th>
+            <th>Locality</th>
+            <th>Phone (business)</th>
+            <th>Phone (home)</th>
+            <th>Active</th>
+            <th>Gesy</th>
+        </tr>
+
+    <% pharmacies.forEach(function(pharmacy) { %>
+        <tr>
+            <td><%= pharmacy.createdAt %></td>
+            <td><%= pharmacy.updatedAt %></td>
+            <td><%= pharmacy.id %></td>
+            <td><%= pharmacy.name %></td>
+            <td><%= pharmacy.address %></td>
+            <td><%= pharmacy.addressPostalCode %></td>
+            <td><%= pharmacy.addressDetails %></td>
+            <td><a href="https://www.google.com/maps/search/?api=1&query=<%= pharmacy.lat %>,<%= pharmacy.lng %>" target="_blank">map</a></td>
+            <td><%= localityUuidToLocalityMap[pharmacy.localityUuid].nameEn %></td>
+            <td><%= pharmacy.phoneBusiness %></td>
+            <td><%= pharmacy.phoneHome %></td>
+            <td><%= pharmacy.active %></td>
+            <td><%= pharmacy.gesy %></td>
+        </tr>
+    <% }); %>
+
+    </table>
+
+    <hr/>
+
+    <form action="/admin/add-pharmacy" method="post">
+        <table>
+            <tr>
+                <td>ID</td>
+                <td><input type="text" name="PROPERTY_PHARMACY_ID" /></td>
+            </tr>
+            <tr>
+                <td>Name (el)</td>
+                <td><input type="text" name="PROPERTY_PHARMACY_NAME_EL" /></td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td><input type="text" name="PROPERTY_PHARMACY_ADDRESS" /></td>
+            </tr>
+            <tr>
+                <td>Postal Code</td>
+                <td><input type="text" name="PROPERTY_PHARMACY_ADDRESS_POSTAL_CODE" /></td>
+            </tr>
+            <tr>
+                <td>Address details</td>
+                <td><input type="text" name="PROPERTY_PHARMACY_ADDRESS_DETAILS" /></td>
+            </tr>
+            <tr>
+                <td>Lat</td>
+                <td><input type="text" name="PROPERTY_PHARMACY_LAT" /></td>
+            </tr>
+            <tr>
+                <td>Lng</td>
+                <td><input type="text" name="PROPERTY_PHARMACY_LNG" /></td>
+            </tr>
+            <tr>
+                <td>Locality</td>
+                <td>
+                <select name="PROPERTY_PHARMACY_LOCALITY_UUID">
+                </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Phone (business)</td>
+                <td><input type="text" name="PROPERTY_PHARMACY_PHONE_BUSINESS" /></td>
+            </tr>
+            <tr>
+                <td>Phone (home)</td>
+                <td><input type="text" name="PROPERTY_PHARMACY_PHONE_HOME" /></td>
+            </tr>
+            <tr>
+                <td>Active</td>
+                <td><input type="hidden" name="PROPERTY_PHARMACY_ACTIVE" value="true"/>true</td>
+            </tr>
+        </table>
+        <div><input type="submit" value="Add Pharmacy" /></div>
+    </form>
+
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+</body>
+</html>

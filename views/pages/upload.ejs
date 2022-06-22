@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+
+<body>
+
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <h1>Load from json</h1>
+
+    <hr/>
+
+    <script type="text/javascript">
+        function submitForm() {
+            fetch("/admin/handle-json", {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'}, 
+                body: document.getElementById("raw_json").value
+            }).then(res => {
+                console.log("Request complete! response:", res);
+            });
+        }
+    </script>
+
+    <form id="myForm" action="javascript:submitForm()" method="post">
+        <div><textarea name="raw_json" id="raw_json" cols="120" rows="20" placeholder="{ 'cities': [...], 'localities': [...], 'pharmacies': [...], 'on-calls': [...] }"></textarea></div>
+        <div><input type="submit" value="Upload" onClick='submitForm'/></div>
+    </form>
+
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+</body>
+</html>

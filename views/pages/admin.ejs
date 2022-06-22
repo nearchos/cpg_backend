@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+
+<body>
+
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <p>
+        <% if (req.oidc.isAuthenticated()) { %>
+        logged in as <%= req.oidc.user.name%> - <a href="/logout">logout</a>
+        <% } else { %>
+        <a href="/login">login</a>
+        <% } %>
+    
+    </p>    
+        
+    </p>
+
+    <h1>Admin</h1>
+
+    <hr/>
+
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+</body>
+</html>

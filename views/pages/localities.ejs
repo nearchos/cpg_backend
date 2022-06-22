@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+
+<body>
+
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <h1>Localities</h1>
+
+    <ul>
+        <% 
+            citiyUuidToCityMap = {};
+            cities.forEach(function(city) { 
+                citiyUuidToCityMap[city.uuid] = city;
+            }); %>
+    </ul>
+
+    <ul>
+        <% localities.forEach(function(locality) { %>
+          <li>
+            <strong><%= locality.nameEl %></strong>
+            <%= locality.nameEn %>
+            of <%= citiyUuidToCityMap[locality.cityUuid].nameEl %>
+            <%= locality.lat %>, <%= locality.lng %>
+          </li>
+        <% }); %>
+    </ul>
+
+
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+</body>
+</html>
