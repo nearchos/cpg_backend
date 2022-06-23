@@ -3,6 +3,8 @@ const path = require('path')
 const { Pharmacy, Locality, City, OnCalls } = require("./data");
 const { auth } = require('express-openid-connect');
 
+const app = express(); // init express
+
 const config = {
   authRequired: false,
   auth0Logout: true,
@@ -13,12 +15,14 @@ const config = {
 };
 
 const PORT = process.env.PORT || 3000;
+if (!config.baseURL && !process.env.AUTH0_BASE_URL && process.env.PORT && process.env.NODE_ENV !== 'production') {
+  config.baseURL = `http://localhost:${PORT}`;
+}
+app.use(auth(config));
 
-const app = express(); // init express
 
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(express.static(path.join(__dirname, 'images')));
-app.use(auth(config));
 app.use(express.json({limit: '2mb'}));
 app.set('view engine', 'ejs'); // set the view engine to ejs
 

@@ -104,3 +104,4 @@ dist
 .tern-port
 .env
 storage.db
+run_local.bat
