@@ -1,5 +1,11 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="/">Cyprus Pharmacy Guide</a>
+  <div style="display: block;">
+    <div><img src="/cpg.png" alt="Cyprus Pharmacy Guide" /></div>
+    <div><a class="navbar-brand" href="/">Cyprus Pharmacy Guide</a></div>
+    <% if (req.oidc.isAuthenticated()) { %>
+      <div>logged in as <%= req.oidc.user.name%></div>
+    <% } %>
+  </div>
   <ul class="navbar-nav mr-auto">
     <li class="nav-item">
       <a class="nav-link" href="/">Home</a>
@@ -9,9 +15,15 @@
       <a class="nav-link" href="/admin/cities">Cities</a>
       <a class="nav-link" href="/admin/localities">Localities</a>
       <a class="nav-link" href="/admin/pharmacies">Pharmacies</a>
+      <a class="nav-link" href="/admin/oncalls">On Calls</a>
+      <a class="nav-link" href="/admin/upload">Upload</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="/about">About</a>
+      <% if (req.oidc.isAuthenticated()) { %>
+        <a class="nav-link" href="/logout">Logout</a>
+      <% } else { %>
+        <a class="nav-link" href="/login">Login</a>
+      <% } %>
     </li>
   </ul>
 </nav>

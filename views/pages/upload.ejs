@@ -9,26 +9,29 @@
         <%- include('../partials/header'); %>
     </header>
 
-    <h1>Load from json</h1>
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
+        <h1>Load from json</h1>
 
-    <hr/>
-
-    <script type="text/javascript">
-        function submitForm() {
-            fetch("/admin/handle-json", {
-                method: "POST",
-                headers: {'Content-Type': 'application/json'}, 
-                body: document.getElementById("raw_json").value
-            }).then(res => {
-                console.log("Request complete! response:", res);
-            });
-        }
-    </script>
-
-    <form id="myForm" action="javascript:submitForm()" method="post">
-        <div><textarea name="raw_json" id="raw_json" cols="120" rows="20" placeholder="{ 'cities': [...], 'localities': [...], 'pharmacies': [...], 'on-calls': [...] }"></textarea></div>
-        <div><input type="submit" value="Upload" onClick='submitForm'/></div>
-    </form>
+        <hr/>
+    
+        <script type="text/javascript">
+            function submitForm() {
+                fetch("/admin/handle-json", {
+                    method: "POST",
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: document.getElementById("raw_json").value
+                }).then(res => {
+                    console.log("Request complete! response:", res);
+                    window.location.assign('/admin')
+                });
+            }
+        </script>
+    
+        <form id="myForm" action="javascript:submitForm()" method="post">
+            <div><textarea name="raw_json" id="raw_json" cols="120" rows="20" placeholder="{ 'cities': [...], 'localities': [...], 'pharmacies': [...], 'on-calls': [...] }"></textarea></div>
+            <div><input type="submit" value="Upload" onClick='submitForm'/></div>
+        </form>
+    </div>
 
     <footer>
         <%- include('../partials/footer'); %>

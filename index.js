@@ -38,7 +38,7 @@ app.get('/sync', (req, res) => { // handle GET requests at '/sync'
     const from = req.query.from;
     let authorized = magic === process.env.magic;
     res.send(`magic: ${magic} -> authorized: ${authorized}, from: ${from}`);
-})
+});
 
 // admin pages
 app.get('/callback', function(req, res) {
@@ -50,7 +50,7 @@ app.get('/admin', function(req, res) {
 });
 
 app.get('/admin/upload', function(req, res) {
-    res.render('pages/upload');
+    res.render('pages/upload', { req: req });
 });
 
 app.post('/admin/handle-json', function(req, res) {
@@ -61,6 +61,7 @@ app.post('/admin/handle-json', function(req, res) {
             json.cities.forEach((city) => City.upsert({uuid: city.UUID, nameEl: city.nameEl, nameEn: city.nameEn, lat: city.lat, lng: city.lng}));
             json.localities.forEach((locality) => Locality.upsert({uuid: locality.UUID, nameEl: locality.nameEl, nameEn: locality.nameEn, lat: locality.lat, lng: locality.lng, cityUuid: locality.cityUUID}));
             json.pharmacies.forEach((pharmacy) => Pharmacy.upsert({id: pharmacy.ID, name: pharmacy.name, address: pharmacy.address, addressPostalCode: pharmacy.addressPostalCode, addressDetails: pharmacy.addressDetails, lat: pharmacy.lat, lng: pharmacy.lng, localityUuid: pharmacy.localityUUID, phoneBusiness: pharmacy.phoneBusiness, phoneHome: pharmacy.phoneHome, active: pharmacy.active, gesy: false}));
+            json['on-calls'].forEach((oncall) => OnCalls.upsert({date: oncall.date, pharmacies: oncall.pharmacies}));
             res.redirect('/admin');
         } else {
             res.status(403).setHeader('content-type', 'application/json').send(`{'error': 'invalid status in JSON'`);
@@ -74,23 +75,25 @@ app.get('/admin/cities', function(req, res) {
     if(!req.oidc.isAuthenticated()) res.redirect('/login');
     City
         .findAll()
-        .then(cities => res.render('pages/cities', { cities: cities }))
+        .then(cities => res.render('pages/cities', { req: req, cities: cities }))
         .catch(error => res.status(500).send(`server error: ${error}`));
 });
 
 app.get('/admin/localities', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
     City
         .findAll()
         .then(cities => {
             Locality
                 .findAll()
-                .then(localities => res.render('pages/localities', { cities: cities, localities: localities }))
+                .then(localities => res.render('pages/localities', { req: req, cities: cities, localities: localities }))
         })
         .catch(error => res.status(500).send(`server error: ${error}`));
 });
 
 
 app.get('/admin/pharmacies', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
     City
         .findAll()
         .then(cities => {
@@ -99,9 +102,17 @@ app.get('/admin/pharmacies', function(req, res) {
                 .then(localities => {
                     Pharmacy
                         .findAll()
-                        .then(pharmacies => res.render('pages/pharmacies', { cities: cities, localities: localities, pharmacies: pharmacies }))
+                        .then(pharmacies => res.render('pages/pharmacies', { req: req, cities: cities, localities: localities, pharmacies: pharmacies }))
                 })
         })
+        .catch(error => res.status(500).send(`server error: ${error}`));
+});
+
+app.get('/admin/oncalls', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    OnCalls
+        .findAll()
+        .then(oncalls => res.render('pages/oncalls', { req: req, oncalls: oncalls }))
         .catch(error => res.status(500).send(`server error: ${error}`));
 });
 

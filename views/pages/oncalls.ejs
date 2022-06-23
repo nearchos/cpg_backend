@@ -10,16 +10,16 @@
     </header>
 
     <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
+        <h1>On Calls</h1>
 
-        <h1>Admin</h1>
-
-        <hr/>
-    
         <ul>
-            <li>Manage authentication at <a href=https://manage.auth0.com>https://manage.auth0.com/</a></li>
-            <li>Launch locally with: <code>heroku local -p 3000</code></li>
+            <% oncalls.forEach(function(oncall) { %>
+              <li>
+                <strong><%= oncall.date %></strong>
+                <%= oncall.pharmacies %>
+              </li>
+            <% }); %>
         </ul>
-
     </div>
 
     <footer>

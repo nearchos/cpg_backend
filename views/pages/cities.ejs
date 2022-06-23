@@ -9,18 +9,18 @@
         <%- include('../partials/header'); %>
     </header>
 
-    <h1>Cities</h1>
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
+        <h1>Cities</h1>
 
-    <ul>
-        <% cities.forEach(function(city) { %>
-          <li>
-            <strong><%= city.nameEl %></strong>
-            <%= city.nameEn %>
-            <%= city.lat %>, <%= city.lng %>
-          </li>
-        <% }); %>
-    </ul>
-
+        <ul>
+            <% cities.forEach(function(city) { %>
+              <li>
+                <strong><%= city.nameEl %> [<%= city.nameEn %>]</strong>
+                - <a href="https://www.google.com/maps/search/?api=1&query=<%= city.lat %>,<%= city.lng %>" target="_blank">map</a>
+              </li>
+            <% }); %>
+        </ul>
+    </div>
 
     <footer>
         <%- include('../partials/footer'); %>
