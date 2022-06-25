@@ -34,11 +34,8 @@ app.get('/', async (req, res) => { // handle GET requests at '/'
         let localities= await Locality.findAll();
         let pharmacies = await Pharmacy.findAll();
         // todo edit dates so that it returns same date until next morning
-        let now = new Date();
-        let nextDay = new Date();
-        nextDay.setDate(now.getDate() + 1);
-        let dateNow = now.toISOString().substring(0, 10);
-        let dateNextDay = nextDay.toISOString().substring(0, 10);
+        let dateNow = isEarlyHours() ? getYesterday() : getToday();
+        let dateNextDay = isEarlyHours() ? getToday() : getTomorrow();
         let onCallNow = await OnCalls.findOne({where: {'date': dateNow}});
         let pharmacyIdsNow = onCallNow ? onCallNow.pharmacies.split(',') : [];
         let onCallNextDay = await OnCalls.findOne({where: {'date': dateNextDay}});
@@ -315,4 +312,91 @@ function replacer(key, value) { // used in stringify to rename selected & ignore
     if (key=='createdAt') return undefined;
     else if (key=='updatedAt') return undefined;
     else return value;
+}
+
+function isSummerTime() {
+    let date = new Date();
+    let month = date.getMonth() + 1;
+    return month >= 5 && month <= 9;
+}
+
+function arePharmaciesOpen() {
+    let date = new Date();
+    let month = date.getMonth() + 1;
+    let dayOfWeek = date.getDay(); // Sunday = 0, Monday = 1, ... 
+    let isSummerTime = month >= 5 && month <= 9;
+    let hour = date.getHours(); // 0..23
+    let minute = date.getMinutes(); // 0..59
+    let morningTime = hour >= 8 && (hour < 13 || (hour == 13 && minute <= 30)); // 8:00 to 13:30
+    let afternoonTime = isSummerTime ?
+        hour >= 16 && (hour < 19 || (hour == 19 && minute <= 30)) : // summer time 16:00 to 19:30
+        hour >= 15 && (hour < 18 || (hour == 18 && minute <= 30));  // winter 15:00 to 18:30
+
+    switch (dayOfWeek) {
+        case 1: // Monday
+        case 2: // Tuesday
+        case 4: // Thursday
+        case 5: // Friday
+            return morningTime || afternoonTime;
+        case 3: // Wednesday
+        case 6: // Saturday
+            return morningTime; // on Wed and Sat it's morning only
+        case 0: // Sunday, closed on Sundays
+        default:
+            return false;
+    }
+}
+
+function getNextClosingTime() {
+    let date = new Date();
+    let month = date.getMonth() + 1;
+    let dayOfWeek = date.getDay(); // Sunday = 0, Monday = 1, ... 
+    let isSummerTime = month >= 5 && month <= 9;
+    let hour = date.getHours(); // 0..23
+    let minute = date.getMinutes(); // 0..59
+    let morningTime = hour >= 8 && (hour < 13 || (hour == 13 && minute <= 30)); // 8:00 to 13:30
+    let afternoonTime = isSummerTime ?
+        hour >= 16 && (hour < 19 || (hour == 19 && minute <= 30)) : // summer time 16:00 to 19:30
+        hour >= 15 && (hour < 18 || (hour == 18 && minute <= 30));  // winter 15:00 to 18:30
+
+    switch (dayOfWeek) {
+        case 1: // Monday
+        case 2: // Tuesday
+        case 4: // Thursday
+        case 5: // Friday
+            if(morningTime)
+                return "13:30";
+            else if(afternoonTime)
+                return isSummerTime ? "19:30" : "18:30";
+        case 3: // Wednesday
+        case 6: // Saturday
+            return morningTime; // on Wed and Sat it's morning only
+        case 0: // Sunday, closed on Sundays
+        default:
+            return false;
+    }
+}
+
+function isEarlyHours() {
+    let hour = new Date().getHours(); // 0..23
+    return hour < 8; // between midnight and 7:59
+}
+
+function getYesterday() {
+    let now = new Date();
+    let previousDay = new Date();
+    previousDay.setDate(now.getDate() - 1);
+    return previousDay.toISOString().substring(0, 10);
+}
+
+function getToday() {
+    let now = new Date();
+    return now.toISOString().substring(0, 10);
+}
+
+function getTomorrow() {
+    let now = new Date();
+    let nextDay = new Date();
+    nextDay.setDate(now.getDate() + 1);
+    return nextDay.toISOString().substring(0, 10);
 }
