@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <%- include('../../partials/head'); %>
+    </head>
+
+<body>
+
+    <header>
+        <%- include('../../partials/header'); %>
+    </header>
+
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
+
+        <h1>City</h1>
+
+        <form action="/admin/city/<%= city.uuid %>" method="post">
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">Uuid</strong>
+                <%= city.uuid %>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">NameEl</strong>
+                <input type="text" size="80" name="cityNameEl" id="cityNameEl" value="<%= city.nameEl %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">NameEn</strong>
+                <input type="text" size="80" name="cityNameEn" id="cityNameEn" value="<%= city.nameEn %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">Lat, Lng</strong>
+                <input type="text" size="20" name="cityLat" id="cityLat" value="<%= city.lat %>"/> , 
+                <input type="text" size="20" name="cityLng" id="cityLng" value="<%= city.lng %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">Created</strong>
+                <%= city.createdAt %>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">Updated</strong>
+                <%= city.updatedAt %>
+            </p>
+            <p>
+                <input type="submit" value="Save">
+            </p>
+        </form>
+
+        <hr/>
+
+        <pre style="border-color: black; border-style: dashed;"><%= JSON.stringify(city, null, 4) %> </pre>
+
+    </div>
+
+    <footer>
+        <%- include('../../partials/footer'); %>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+
+    <script>
+        navigator.geolocation.getCurrentPosition(setPosition);
+        var geoPosition;
+        function setPosition(position) {
+            console.log(`position: ${JSON.stringify(position)}`);
+        }
+    </script>
+<body>
+
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
+
+        <h2> <img src="cpg.png" width="64"/> Cyprus Pharmacy Guide </h2>
+
+        <hr/>
+    
+        <div>
+            <ul class="nav nav-tabs mb-3" id="myTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="oncallnow-tab-id" data-bs-toggle="tab" href="#tab_oncallnow" data-bs-target="#tab_oncallnow" type="button" role="tab" aria-controls="tab_oncallnow" aria-selected="true">Διημερεύουν τώρα</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="nextday-tab-id" data-bs-toggle="tab" href="#tab_nextday" data-bs-target="#tab_nextday" type="button" role="tab" aria-controls="tab_nextday" aria-selected="false">Επόμενη μέρα</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="all-tab-id" data-bs-toggle="tab" href="#tab_all" data-bs-target="#tab_all" type="button" role="tab" aria-controls="tab_all" aria-selected="false">Όλα</a>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="tab_oncallnow" role="tabpanel" aria-labelledby="oncallnow-tab-id">
+                    <%- include('../partials/pharmacies_list', { cities: cities, localities: localities, pharmacies: pharmacies, selectedPharmacyIds: pharmacyIdsNow }); %>
+                </div>
+                <div class="tab-pane fade" id="tab_nextday" role="tabpanel" aria-labelledby="nextday-tab-id">
+
+                    <%- include('../partials/pharmacies_list', { cities: cities, localities: localities, pharmacies: pharmacies, selectedPharmacyIds: pharmacyIdsNextDay }); %>
+                </div>
+                <div class="tab-pane fade" id="tab_all" role="tabpanel" aria-labelledby="all-tab-id">
+                    <% 
+                    let allPharmacyIds = pharmacies.map(p => p.id);
+                    %> 
+                    <p>Όλα τα φαρμακεία</p>
+                    <%- include('../partials/pharmacies_list', { cities: cities, localities: localities, pharmacies: pharmacies, selectedPharmacyIds: allPharmacyIds }); %>
+                </div>
+            </div>
+        </div>
+
+        <div>
+
+            <hr/>
+
+        </div>
+
+    </div>
+
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script>
+        $('#myTabs a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        })
+    </script>
+
+</body>
+</html>

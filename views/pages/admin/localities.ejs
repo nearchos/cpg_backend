@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <%- include('../../partials/head'); %>
+    </head>
+
+<body>
+
+    <header>
+        <%- include('../../partials/header'); %>
+    </header>
+
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
+        <h1>Localities</h1>
+
+        <ul>
+            <% 
+                citiyUuidToCityMap = {};
+                cities.forEach(function(city) { 
+                    citiyUuidToCityMap[city.uuid] = city;
+                }); %>
+        </ul>
+    
+        <ul>
+            <%
+            localities.forEach(function(locality) {
+                let city = citiyUuidToCityMap[locality.cityUuid];
+            %>
+              <li>
+                <span style="display: inline-block; width: 100px; text-align: start;"><a href="/admin/locality/<%= locality.uuid %>"><%= locality.uuid.substr(locality.uuid.length-8) %>...</a></span>
+                <strong><%= locality.nameEl %></strong> <%= locality.nameEn %>
+                of <strong><%= city ? city.nameEl : "unknown" %></strong> <%= city ? city.nameEn : "unknown" %>
+                - <a href="https://www.google.com/maps/search/?api=1&query=<%= locality.lat %>,<%= locality.lng %>" target="_blank">map</a>
+              </li>
+            <%
+             });
+            %>
+        </ul>
+    </div>
+
+    <footer>
+        <%- include('../../partials/footer'); %>
+    </footer>
+
+</body>
+</html>

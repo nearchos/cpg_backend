@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <%- include('../../partials/head'); %>
+    </head>
+
+<body>
+
+    <header>
+        <%- include('../../partials/header'); %>
+    </header>
+
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
+        <h1>Locality</h1>
+
+        <form action="/admin/locality/<%= locality.uuid %>" method="post">
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">Uuid</strong>
+                <%= locality.uuid %>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">NameEl</strong>
+                <input type="text" size="80" name="localityNameEl" id="localityNameEl" value="<%= locality.nameEl %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">NameEn</strong>
+                <input type="text" size="80" name="localityNameEn" id="localityNameEn" value="<%= locality.nameEn %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">Lat, Lng</strong>
+                <input type="text" size="20" name="localityLat" id="localityLat" value="<%= locality.lat %>"/> , 
+                <input type="text" size="20" name="localityLng" id="localityLng" value="<%= locality.lng %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">City</strong>
+                <select name="localityCityUuid" id="localityCityUuid">
+                <% 
+                cities.forEach(city => {
+                %> 
+                    <option value="<%=city.uuid%>" <%= city.uuid === locality.cityUuid ? "selected" : "" %>><%=city.nameEl%></option>
+                <% 
+                });
+                %> 
+                </select>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">Created</strong>
+                <%= locality.createdAt %>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 100px; text-align: start;">Updated</strong>
+                <%= locality.updatedAt %>
+            </p>
+            <p>
+                <input type="submit" value="Save">
+            </p>
+        </form>
+
+        <hr/>
+
+        <pre style="border-color: black; border-style: dashed;"><%= JSON.stringify(locality, null, 4) %> </pre>
+
+    </div>
+
+    <footer>
+        <%- include('../../partials/footer'); %>
+    </footer>
+
+</body>
+</html>

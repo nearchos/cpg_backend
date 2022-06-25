@@ -20,24 +20,77 @@ if (!config.baseURL && !process.env.AUTH0_BASE_URL && process.env.PORT && proces
 }
 app.use(auth(config));
 
-
 // auth router attaches /login, /logout, and /callback routes to the baseURL
 app.use(express.static(path.join(__dirname, 'images')));
 app.use(express.json({limit: '2mb'}));
+app.use(express.urlencoded());
 app.set('view engine', 'ejs'); // set the view engine to ejs
 
 // index page
-app.get('/', (req, res) => { // handle GET requests at '/'
-    const { from, magic } = req.params;
-    let authorized = magic === process.env.magic;
-    res.send(`Hello World! -> authorized: ${authorized}, from: ${from}`);
+app.get('/', async (req, res) => { // handle GET requests at '/'
+    try {
+        // todo use caching
+        let cities = await City.findAll();
+        let localities= await Locality.findAll();
+        let pharmacies = await Pharmacy.findAll();
+        // todo edit dates so that it returns same date until next morning
+        let now = new Date();
+        let nextDay = new Date();
+        nextDay.setDate(now.getDate() + 1);
+        let dateNow = now.toISOString().substring(0, 10);
+        let dateNextDay = nextDay.toISOString().substring(0, 10);
+        let onCallNow = await OnCalls.findOne({where: {'date': dateNow}});
+        let pharmacyIdsNow = onCallNow ? onCallNow.pharmacies.split(',') : [];
+        let onCallNextDay = await OnCalls.findOne({where: {'date': dateNextDay}});
+        let pharmacyIdsNextDay = onCallNextDay ? onCallNextDay.pharmacies.split(',') : [];
+        res.render('pages/home', { cities: cities, localities: localities, pharmacies: pharmacies, pharmacyIdsNow: pharmacyIdsNow, pharmacyIdsNextDay: pharmacyIdsNextDay });
+    } catch(err) {
+        res.status(500).send({status: 'error', message: `database error: ${err}`});
+    }
 })
 
-app.get('/sync', (req, res) => { // handle GET requests at '/sync'
+app.get('/pharmacy/:id', async (req, res) => {
+    const { id } = req.params; // extract 'id' from URI request
+    console.log(id);
+    try {
+        // todo use caching
+        let cities = await City.findAll();
+        let localities= await Locality.findAll();
+        let pharmacy = await Pharmacy.findOne({where: {'id': id}});
+console.log(`${id} -> ${JSON.stringify(pharmacy)}`);
+
+        res.render('pages/pharmacy', { cities: cities, localities: localities, pharmacy: pharmacy});
+    } catch(err) {
+        res.status(500).send({status: 'error', message: `database error: ${err}`});
+    }
+})
+
+// API call
+app.get('/api/sync', async (req, res) => { // handle GET requests at '/sync'
     const magic = req.query.magic;
     const from = req.query.from;
     let authorized = magic === process.env.magic;
-    res.send(`magic: ${magic} -> authorized: ${authorized}, from: ${from}`);
+    res.setHeader('Content-Type', 'application/json');
+    if(authorized) {
+        f = parseInt(from) || 0;
+        if(f >= 0) {
+            // todo check for cached copy
+            try {
+                let cities = await City.findAll();
+                let localities= await Locality.findAll();
+                let pharmacies = await Pharmacy.findAll();
+                let oncalls = await OnCalls.findAll();
+                let lastUpdated = Date.now();
+                res.send(`{ "status": "ok", "cities": ${JSON.stringify(cities, replacer)}, "localities": ${JSON.stringify(localities, replacer)}, "pharmacies": ${JSON.stringify(pharmacies, replacer)}, "on-calls": ${JSON.stringify(oncalls, replacer)}, "lastUpdated": ${lastUpdated}}`);
+            } catch(err) {
+                res.status(500).send({status: 'error', message: `database error: ${err}`});
+            }
+        } else {
+            res.status(400).send({status: 'error', message: 'invalid parameter - from must be a non-negative integer'});
+        }
+    } else {
+        res.status(401).send({status: 'error', message: 'not authorized - check your magic'});
+    }
 });
 
 // admin pages
@@ -46,11 +99,11 @@ app.get('/callback', function(req, res) {
 });
 
 app.get('/admin', function(req, res) {
-    res.render('pages/admin', { req: req });
+    res.render('pages/admin/admin', { req: req });
 });
 
 app.get('/admin/upload', function(req, res) {
-    res.render('pages/upload', { req: req });
+    res.render('pages/admin/upload', { req: req });
 });
 
 app.post('/admin/handle-json', function(req, res) {
@@ -75,8 +128,35 @@ app.get('/admin/cities', function(req, res) {
     if(!req.oidc.isAuthenticated()) res.redirect('/login');
     City
         .findAll()
-        .then(cities => res.render('pages/cities', { req: req, cities: cities }))
+        .then(cities => res.render('pages/admin/cities', { req: req, cities: cities }))
         .catch(error => res.status(500).send(`server error: ${error}`));
+});
+
+app.get('/admin/city/:uuid', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    const { uuid } = req.params; // extract 'uuid' from URI request
+    City
+        .findOne({ where: {'uuid': uuid}})
+        .then(city => res.render(`pages/admin/city`, { req: req, city: city }))
+        .catch(error => res.status(500).send(`server error: ${error}`));
+});
+
+app.post('/admin/city/:uuid', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    const { uuid } = req.params; // extract 'uuid' from URI request
+
+    if(req.body['cityNameEl'] && req.body['cityNameEn'] && req.body['cityLat'] && req.body['cityLng']) {
+        City
+            .findOne({ where: {'uuid': uuid}})
+            .then(city => {
+                City
+                    .update({nameEl: `${req.body['cityNameEl']}`, nameEn: `${req.body['cityNameEn']}`, lat: `${req.body['cityLat']}`, lng: `${req.body['cityLng']}`}, { where: {uuid: uuid}})
+                    .then(result => res.redirect(`/admin/city/${uuid}`))
+            })
+            .catch(error => res.status(500).send(`server error: ${error}`));
+    } else {
+        res.status(400).send('Invalid payload');
+    }
 });
 
 app.get('/admin/localities', function(req, res) {
@@ -86,14 +166,45 @@ app.get('/admin/localities', function(req, res) {
         .then(cities => {
             Locality
                 .findAll()
-                .then(localities => res.render('pages/localities', { req: req, cities: cities, localities: localities }))
+                .then(localities => res.render('pages/admin/localities', { req: req, cities: cities, localities: localities }))
         })
         .catch(error => res.status(500).send(`server error: ${error}`));
 });
 
+app.get('/admin/locality/:uuid', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    const { uuid } = req.params; // extract 'uuid' from URI request
+    City
+        .findAll()
+        .then(cities => {
+            Locality
+                .findOne({ where: {'uuid': uuid}})
+                .then(locality => res.render(`pages/admin/locality`, { req: req, locality: locality, cities: cities }))
+                .catch(error => res.status(500).send(`server error: ${error}`));
+            })
+});
+
+app.post('/admin/locality/:uuid', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    const { uuid } = req.params; // extract 'uuid' from URI request
+
+    if(req.body['localityNameEl'] && req.body['localityNameEn'] && req.body['localityLat'] && req.body['localityLng'] && req.body['localityCityUuid']) {
+        Locality
+            .findOne({ where: {'uuid': uuid}})
+            .then(locality => {
+                Locality
+                    .update({nameEl: `${req.body['localityNameEl']}`, nameEn: `${req.body['localityNameEn']}`, lat: `${req.body['localityLat']}`, lng: `${req.body['localityLng']}`, cityUuid: `${req.body['localityCityUuid']}`}, { where: {uuid: uuid}})
+                    .then(result => res.redirect(`/admin/locality/${uuid}`))
+            })
+            .catch(error => res.status(500).send(`server error: ${error}`));
+    } else {
+        res.status(401).send('Invalid payload');
+    }
+});
 
 app.get('/admin/pharmacies', function(req, res) {
     if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    const showInactive = req.query.showInactive != null; // extract 'showInactive' from URI request
     City
         .findAll()
         .then(cities => {
@@ -102,19 +213,106 @@ app.get('/admin/pharmacies', function(req, res) {
                 .then(localities => {
                     Pharmacy
                         .findAll()
-                        .then(pharmacies => res.render('pages/pharmacies', { req: req, cities: cities, localities: localities, pharmacies: pharmacies }))
+                        .then(pharmacies => res.render('pages/admin/pharmacies', { req: req, cities: cities, localities: localities, pharmacies: pharmacies, showInactive: showInactive }))
                 })
         })
         .catch(error => res.status(500).send(`server error: ${error}`));
 });
 
+app.get('/admin/pharmacy/:id', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    const { id } = req.params; // extract 'id' from URI request
+    Locality
+        .findAll()
+        .then(localities => {
+            Pharmacy
+                .findOne({ where: {'id': id}})
+                .then(pharmacy => res.render(`pages/admin/pharmacy`, { req: req, pharmacy: pharmacy, localities: localities }))
+                .catch(error => res.status(500).send(`server error: ${error}`));
+            })
+});
+
+app.post('/admin/pharmacy/:id', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    const { id } = req.params; // extract 'id' from URI request
+
+    if(req.body['pharmacyName'] && req.body['pharmacyAddress'] && req.body['pharmacyAddressPostalCode'] && req.body['pharmacyAddressDetails'] && 
+        req.body['pharmacyLat'] && req.body['pharmacyLng'] && req.body['pharmacyLocalityUuid'] && req.body['pharmacyPhoneBusiness'] &&
+        req.body['pharmacyPhoneHome']) {
+        Pharmacy
+            .findOne({ where: {'id': id}})
+            .then(pharmacy => {
+                Pharmacy
+                    .update({
+                        name: `${req.body['pharmacyName']}`,
+                        address: `${req.body['pharmacyAddress']}`,
+                        addressPostalCode: `${req.body['pharmacyAddressPostalCode']}`,
+                        addressDetails: `${req.body['pharmacyAddressDetails']}`,
+                        lat: `${req.body['pharmacyLat']}`,
+                        lng: `${req.body['pharmacyLng']}`,
+                        localityUuid: `${req.body['pharmacyLocalityUuid']}`,
+                        phoneBusiness: `${req.body['pharmacyPhoneBusiness']}`,
+                        phoneHome: `${req.body['pharmacyPhoneHome']}`,
+                        active: `${req.body['pharmacyActive']}`===`on`,
+                        gesy: `${req.body['pharmacyGesy']}`===`on`,
+                        phone: `${req.body['pharmacyLocalityUuid']}`}, { where: {id: id}})
+                    .then(result => res.redirect(`/admin/pharmacy/${id}`))
+            })
+            .catch(error => res.status(500).send(`server error: ${error}`));
+    } else {
+        console.log(`req.body: ${JSON.stringify(req.body)}`);
+        res.status(401).send('Invalid payload');
+    }
+});
+
 app.get('/admin/oncalls', function(req, res) {
     if(!req.oidc.isAuthenticated()) res.redirect('/login');
     OnCalls
-        .findAll()
-        .then(oncalls => res.render('pages/oncalls', { req: req, oncalls: oncalls }))
+        .findAll({order: [['date', 'ASC']]})
+        .then(oncalls => res.render('pages/admin/oncalls', { req: req, oncalls: oncalls }))
         .catch(error => res.status(500).send(`server error: ${error}`));
+});
+
+app.get('/admin/oncall/:date', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    const { date } = req.params; // extract 'date' from URI request
+    OnCalls
+        .findOne({ where: {'date': date}})
+        .then(oncall => {
+            Locality
+                .findAll()
+                .then(localities => {
+                    Pharmacy
+                        .findAll()
+                        .then(pharmacies => res.render('pages/admin/oncall', { req: req, oncall: oncall, pharmacies: pharmacies, localities: localities }))
+                })
+        })
+        .catch(error => res.status(500).send(`server error: ${error}`));
+});
+
+app.post('/admin/oncall/:date', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    const { date } = req.params; // extract 'date' from URI request
+    if(req.body['pharmacyIds']) {
+        OnCalls
+            .findOne({ where: {date: date}})
+            .then(oncall => {
+                OnCalls
+                    .update({pharmacies: `${req.body['pharmacyIds']}`}, { where: {date: date}})
+                    .then(result => res.redirect(`/admin/oncall/${date}`))
+                    .catch(err => res.status(500).send(`error while updating OnCall entry for ${date}: ${err}`));
+            })
+            .catch(error => res.status(500).send(`server error: ${error}`));
+    } else {
+        res.status(400).send('Invalid payload');
+    }
 });
 
 app.use(express.static(path.join(__dirname, 'public')))
     .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+function replacer(key, value) { // used in stringify to rename selected & ignore unneeded properties
+    if (key=='createdAt') return undefined;
+    else if (key=='updatedAt') return undefined;
+    else return value;
+}

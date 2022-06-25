@@ -1,0 +1,93 @@
+<html>
+    <head>
+        <%- include('../../partials/head'); %>
+    </head>
+
+<body>
+
+    <header>
+        <%- include('../../partials/header'); %>
+    </header>
+
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
+        <h1>Pharmacy</h1>
+
+        <form action="/admin/pharmacy/<%= pharmacy.id %>" method="post">
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Id</strong>
+                <%= pharmacy.id %>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Name</strong>
+                <input type="text" size="80" name="pharmacyName" id="pharmacyName" value="<%= pharmacy.name %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Address</strong>
+                <input type="text" size="80" name="pharmacyAddress" id="pharmacyAddress" value="<%= pharmacy.address %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Postal Code</strong>
+                <input type="number" size="20" name="pharmacyAddressPostalCode" id="pharmacyAddressPostalCode" value="<%= pharmacy.addressPostalCode %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Address Details</strong>
+                <input type="text" size="80" name="pharmacyAddressDetails" id="pharmacyAddressDetails" value="<%= pharmacy.addressDetails %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Lat, Lng</strong>
+                <input type="text" size="20" name="pharmacyLat" id="pharmacyLat" value="<%= pharmacy.lat %>"/> , 
+                <input type="text" size="20" name="pharmacyLng" id="pharmacyLng" value="<%= pharmacy.lng %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Locality</strong>
+                <select name="pharmacyLocalityUuid" id="pharmacyLocalityUuid">
+                <% 
+                localities.forEach(locality => {
+                %> 
+                    <option value="<%=locality.uuid%>" <%= locality.uuid === pharmacy.localityUuid ? "selected" : "" %>><%=locality.nameEl%></option>
+                <% 
+                });
+                %> 
+                </select>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Phone Business</strong>
+                <input type="number" size="80" name="pharmacyPhoneBusiness" id="pharmacyPhoneBusiness" value="<%= pharmacy.phoneBusiness %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Phone Home</strong>
+                <input type="number" size="80" name="pharmacyPhoneHome" id="pharmacyPhoneHome" value="<%= pharmacy.phoneHome %>"/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Active</strong>
+                <input type="checkbox" name="pharmacyActive" id="pharmacyActive" <%= pharmacy.active ? "checked" : "" %>/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Gesy</strong>
+                <input type="checkbox" name="pharmacyGesy" id="pharmacyGesy" <%= pharmacy.gesy ? "checked" : "" %>/>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Created</strong>
+                <%= pharmacy.createdAt %>
+            </p>
+            <p>
+                <strong style="display: inline-block; width: 120px; text-align: start;">Updated</strong>
+                <%= pharmacy.updatedAt %>
+            </p>
+            <p>
+                <input type="submit" value="Save">
+            </p>
+        </form>
+
+        <hr/>
+
+        <pre style="border-color: black; border-style: dashed;"><%= JSON.stringify(pharmacy, null, 4) %> </pre>
+
+    </div>
+
+    <footer>
+        <%- include('../../partials/footer'); %>
+    </footer>
+
+</body>
+</html>

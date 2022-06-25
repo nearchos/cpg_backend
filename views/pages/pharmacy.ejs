@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+
+<body>
+
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
+
+        <h1> <img src="/cpg.png" width="64"/> Cyprus Pharmacy Guide </h1>
+
+        <hr/>
+
+        <% 
+        let locality = localities.find(l => l.uuid === pharmacy.localityUuid);
+        %> 
+
+        <div class="my-3 p-3 bg-white rounded box-shadow">
+            <h2 class="border-bottom border-gray pb-2 mb-0 text-success"> <%= pharmacy.name %> </h6>
+            <div class="media text-muted pt-3">
+              <p class="media-body pb-3 mb-0 lh-125 border-bottom border-gray">
+                <strong class="text-gray-dark fixedWidth120"><i class="fa-solid fa-map"></i> Διεύθυνση</strong>
+                <%= pharmacy.address %>, CY-<%= pharmacy.addressPostalCode %>, <%= locality.nameEl %>
+                <a href="https://www.google.com/maps/search/?api=1&query=<%= pharmacy.lat %>,<%= pharmacy.lng %>" target="_blank">map <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        <% 
+        if(pharmacy.addressDetails) {
+        %> 
+                <br>
+                <span class="fixedWidth120"></span>
+                <%= pharmacy.addressDetails %>
+        <% 
+        }
+        %> 
+              </p>
+            </div>
+            <div class="media text-muted pt-3">
+                <p class="media-body pb-3 mb-0 lh-125 border-bottom border-gray">
+                  <strong class="text-gray-dark fixedWidth120"><i class="fa-solid fa-house-medical"></i> Φαρμακείο</strong>
+                  <a href="tel:<%= pharmacy.phoneBusiness %>" title="Dial phone number"> <%= pharmacy.phoneBusiness %> </a>
+                </p>
+              </div>
+            <div class="media text-muted pt-3">
+              <p class="media-body pb-3 mb-0 lh-125 border-bottom border-gray">
+                <strong class="text-gray-dark fixedWidth120"><i class="fa-solid fa-house"></i> Οικία</strong>
+                <a href="tel:<%= pharmacy.phoneHome %>" title="Dial phone number"></i> <%= pharmacy.phoneHome %></a>
+              </p>
+            </div>
+        <% 
+        if(!pharmacy.active) {
+        %> 
+            <div class="media text-muted pt-3">
+              <p class="media-body pb-3 mb-0 lh-125 border-bottom border-gray">
+                <strong style="color: red;" class="fixedWidth120"><i class="fa-solid fa-triangle-exclamation"></i> Προσοχή</strong>
+                <span style="color: red;">Αυτό το φαρμακείο μπορεί να μην είναι ενεργό!</span>
+              </p>
+            </div>
+        <% 
+        }
+        %> 
+        </div>
+
+    </div>
+
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+
+</body>
+</html>
