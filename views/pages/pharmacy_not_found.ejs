@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <%- include('../partials/head'); %>
+    </head>
+
+    <script>
+        navigator.geolocation.getCurrentPosition(setPosition);
+        var geoPosition;
+        function setPosition(position) {
+            console.log(`position: ${JSON.stringify(position)}`);
+        }
+    </script>
+<body>
+    <div class="d-flex align-items-center justify-content-center vh-100">
+        <div class="text-center">
+            <img src="/cpg.png" alt="Cyprus Pharmacy Guide"/>
+            <h1 class="display-1 fw-bold">404</h1>
+            <p class="fs-3"> <span class="text-success">Ooops!</span> Page not found.</p>
+            <p class="lead">
+                The pharmacy with the given ID (<%= id %>) could not be found.
+              </p>
+            <a href="/" class="btn btn-primary btn-success">Go Home</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -48,15 +48,17 @@ app.get('/', async (req, res) => { // handle GET requests at '/'
 
 app.get('/pharmacy/:id', async (req, res) => {
     const { id } = req.params; // extract 'id' from URI request
-    console.log(id);
     try {
         // todo use caching
-        let cities = await City.findAll();
-        let localities= await Locality.findAll();
         let pharmacy = await Pharmacy.findOne({where: {'id': id}});
-console.log(`${id} -> ${JSON.stringify(pharmacy)}`);
-
-        res.render('pages/pharmacy', { cities: cities, localities: localities, pharmacy: pharmacy});
+        if(pharmacy==undefined) {
+            res.status(404).render('pages/pharmacy_not_found', { id: id });
+        } else {
+            let localities= await Locality.findAll();
+            let cities = await City.findAll();
+    
+            res.render('pages/pharmacy', { cities: cities, localities: localities, pharmacy: pharmacy});
+        }
     } catch(err) {
         res.status(500).send({status: 'error', message: `database error: ${err}`});
     }
@@ -312,12 +314,6 @@ function replacer(key, value) { // used in stringify to rename selected & ignore
     if (key=='createdAt') return undefined;
     else if (key=='updatedAt') return undefined;
     else return value;
-}
-
-function isSummerTime() {
-    let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
-    let month = date.getMonth() + 1;
-    return month >= 5 && month <= 9;
 }
 
 function arePharmaciesOpen() {

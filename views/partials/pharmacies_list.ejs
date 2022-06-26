@@ -37,21 +37,24 @@ cities.forEach(city => {
 
 <div>
     <div class="alert alert-success">
-        <%= city.nameEl %>
+        <strong> <%= city.nameEl %> </strong> ~<%= getDistanceFromLatLonInKm(city.lat, city.lng, myLat, myLng).toFixed(1) %>Km
     </div>
 <%
     citiesToPharmacies.get(city).forEach(pharmacy => {
         let locality = localities.find(l => l.uuid == pharmacy.localityUuid);
 %> 
-    <div class="my-3 p-3 bg-white rounded box-shadow">
-        <strong class="h5 border-bottom border-gray pb-2 mb-0"> <a href="/pharmacy/<%= pharmacy.id %>"> <%= pharmacy.name %> <i class="fa-solid fa-arrow-up-right-from-square"></i> </a> </strong>
-        <%= pharmacy.address %>, CY-<%= pharmacy.addressPostalCode %>, <%= locality.nameEl %>
-        <%= pharmacy.addressDetails ? `(${pharmacy.addressDetails})` : `` %>
+    <div class="my-3 p-3 bg-white rounded box-shadow" onclick="location.href='/pharmacy/<%= pharmacy.id %>';" style="cursor: pointer;">
+        <div class="border-bottom border-gray pb-2 mb-0">
+            <strong class="h5"> <%= pharmacy.name %> </strong>
+            <%= pharmacy.address %>, CY-<%= pharmacy.addressPostalCode %>, <%= locality.nameEl %>
+            <%= pharmacy.addressDetails ? `(${pharmacy.addressDetails})` : `` %>
+        </div>
         <div class="media text-muted pt-3">
-        <p class="media-body pb-3 mb-0 lh-125">
-            <a href="https://www.google.com/maps/search/?api=1&query=<%= pharmacy.lat %>,<%= pharmacy.lng %>" target="_blank" class="btn btn-success btn-sm"> <i class="fa-solid fa-map"></i> View on map <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-            <a href="tel:<%= pharmacy.phoneBusiness %>" title="Dial phone number" class="btn btn-success btn-sm"> <i class="fa-solid fa-phone"></i> Call <%= pharmacy.phoneBusiness %> </a>
-        </p>
+            <p class="media-body pb-3 mb-0 lh-125">
+                <a href="https://www.google.com/maps/search/?api=1&query=<%= pharmacy.lat %>,<%= pharmacy.lng %>" target="_blank" class="btn btn-success btn-sm insideLink"> <i class="fa-solid fa-map"></i> View on map <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=<%= pharmacy.lat %>,<%= pharmacy.lng %>" target="_blank" class="btn btn-success btn-sm insideLink"> <i class="fa-solid fa-location-arrow"></i> Directions <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                <a href="tel:<%= pharmacy.phoneBusiness %>" title="Dial phone number" class="btn btn-success btn-sm insideLink"> <i class="fa-solid fa-phone"></i> Call <%= pharmacy.phoneBusiness %> </a>
+            </p>
         </div>
     </div>
 <% 

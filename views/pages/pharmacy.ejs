@@ -5,11 +5,11 @@
 
 <body>
 
+  <nav class="navbar sticky-top navbar-light m-md-3 bg-light">
+    <h3> <img src="/cpg.png" width="64"/> Cyprus Pharmacy Guide </h3>
+  </nav>
+
     <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
-
-        <h1> <img src="/cpg.png" width="64"/> Cyprus Pharmacy Guide </h1>
-
-        <hr/>
 
         <% 
         let locality = localities.find(l => l.uuid === pharmacy.localityUuid);
@@ -18,10 +18,9 @@
         <div class="my-3 p-3 bg-white rounded box-shadow">
             <h2 class="border-bottom border-gray pb-2 mb-0 text-success"> <%= pharmacy.name %> </h6>
             <div class="media text-muted pt-3">
-              <p class="media-body pb-3 mb-0 lh-125 border-bottom border-gray">
-                <strong class="text-gray-dark fixedWidth120"><i class="fa-solid fa-map"></i> Διεύθυνση</strong>
+              <p class="media-body mb-0 lh-125 ">
+                <strong class="text-gray-dark fixedWidth120"> <i class="fa-solid fa-location-dot"></i> Διεύθυνση</strong>
                 <%= pharmacy.address %>, CY-<%= pharmacy.addressPostalCode %>, <%= locality.nameEl %>
-                <a href="https://www.google.com/maps/search/?api=1&query=<%= pharmacy.lat %>,<%= pharmacy.lng %>" target="_blank">map <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
         <% 
         if(pharmacy.addressDetails) {
         %> 
@@ -34,22 +33,29 @@
               </p>
             </div>
             <div class="media text-muted pt-3">
-                <p class="media-body pb-3 mb-0 lh-125 border-bottom border-gray">
-                  <strong class="text-gray-dark fixedWidth120"><i class="fa-solid fa-house-medical"></i> Φαρμακείο</strong>
-                  <a href="tel:<%= pharmacy.phoneBusiness %>" title="Dial phone number"> <%= pharmacy.phoneBusiness %> </a>
-                </p>
-              </div>
+              <p class="media-body pb-3 mb-0 lh-125 border-bottom border-gray">
+                <span class="fixedWidth120"></span>
+                <a href="https://www.google.com/maps/search/?api=1&query=<%= pharmacy.lat %>,<%= pharmacy.lng %>" target="_blank" class="btn btn-success btn-sm"> <i class="fa-solid fa-map"></i> View on map <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=<%= pharmacy.lat %>,<%= pharmacy.lng %>" target="_blank" class="btn btn-success btn-sm"> <i class="fa-solid fa-location-arrow"></i> Directions <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+              </p>
+            </div>
             <div class="media text-muted pt-3">
               <p class="media-body pb-3 mb-0 lh-125 border-bottom border-gray">
+                <strong class="text-gray-dark fixedWidth120"><i class="fa-solid fa-house-medical"></i> Φαρμακείο</strong>
+                <a href="tel:<%= pharmacy.phoneBusiness %>" title="Dial phone number" class="btn btn-success btn-sm"> <i class="fa-solid fa-phone"></i> Call <%= pharmacy.phoneBusiness %> </a>
+              </p>
+            </div>
+            <div class="media text-muted pt-3">
+              <p class="media-body pb-3 mb-0 lh-125">
                 <strong class="text-gray-dark fixedWidth120"><i class="fa-solid fa-house"></i> Οικία</strong>
-                <a href="tel:<%= pharmacy.phoneHome %>" title="Dial phone number"></i> <%= pharmacy.phoneHome %></a>
+                <a href="tel:<%= pharmacy.phoneHome %>" title="Dial phone number" class="btn btn-success btn-sm"> <i class="fa-solid fa-phone"></i> Call <%= pharmacy.phoneHome %> </a>
               </p>
             </div>
         <% 
         if(!pharmacy.active) {
         %> 
             <div class="media text-muted pt-3">
-              <p class="media-body pb-3 mb-0 lh-125 border-bottom border-gray">
+              <p class="media-body pb-3 mb-0 lh-125 border-top border-gray">
                 <strong style="color: red;" class="fixedWidth120"><i class="fa-solid fa-triangle-exclamation"></i> Προσοχή</strong>
                 <span style="color: red;">Αυτό το φαρμακείο μπορεί να μην είναι ενεργό!</span>
               </p>
