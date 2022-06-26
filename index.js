@@ -315,13 +315,13 @@ function replacer(key, value) { // used in stringify to rename selected & ignore
 }
 
 function isSummerTime() {
-    let date = new Date();
+    let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
     let month = date.getMonth() + 1;
     return month >= 5 && month <= 9;
 }
 
 function arePharmaciesOpen() {
-    let date = new Date();
+    let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
     let month = date.getMonth() + 1;
     let dayOfWeek = date.getDay(); // Sunday = 0, Monday = 1, ... 
     let isSummerTime = month >= 5 && month <= 9;
@@ -348,7 +348,7 @@ function arePharmaciesOpen() {
 }
 
 function getNextClosingTime() {
-    let date = new Date();
+    let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
     let month = date.getMonth() + 1;
     let dayOfWeek = date.getDay(); // Sunday = 0, Monday = 1, ... 
     let isSummerTime = month >= 5 && month <= 9;
@@ -378,24 +378,25 @@ function getNextClosingTime() {
 }
 
 function isEarlyHours() {
-    let hour = new Date().getHours(); // 0..23
+    let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
+    let hour = date.getHours(); // 0..23
     return hour < 8; // between midnight and 7:59
 }
 
 function getYesterday() {
-    let now = new Date();
+    let now = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
     let previousDay = new Date();
     previousDay.setDate(now.getDate() - 1);
     return previousDay.toISOString().substring(0, 10);
 }
 
 function getToday() {
-    let now = new Date();
+    let now = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
     return now.toISOString().substring(0, 10);
 }
 
 function getTomorrow() {
-    let now = new Date();
+    let now = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
     let nextDay = new Date();
     nextDay.setDate(now.getDate() + 1);
     return nextDay.toISOString().substring(0, 10);

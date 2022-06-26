@@ -21,18 +21,20 @@
         <% 
 
         function isEarlyHours() {
-            let hour = new Date().getHours(); // 0..23
+            let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
+            let hour = date.getHours(); // 0..23
             return hour < 8; // between midnight and 7:59
         }
 
         function isEvening() {
-            let hour = new Date().getHours(); // 0..23
+            let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
+            let hour = date.getHours(); // 0..23
             return hour >= 19; // between 19:00 and 23:59
         }
 
         let dateFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
-                        
-        let now = new Date();
+
+        let now = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
         let nextDay = new Date();
         nextDay.setDate(now.getDate() + 1);
         let previousDay = new Date();
