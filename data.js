@@ -1,9 +1,18 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'storage.db'
+console.log(`process.env.DATABASE_URL: ${process.env.DATABASE_URL}`);
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: "postgres"
 });
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 const Pharmacy = sequelize.define('Pharmacy', {
     id: { type: DataTypes.INTEGER, primaryKey: true },
