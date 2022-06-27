@@ -4,72 +4,21 @@
     <%- include('../partials/head'); %>
 
     <script>
-        navigator.geolocation.getCurrentPosition(setPosition);
+        navigator.geolocation.watchPosition(updatePosition, error);
+
         var geoPosition;
-        function setPosition(position) {
+        function updatePosition(position) {
             console.log(`position: ${JSON.stringify(position)}`);
+        }
+
+        function error(err) {
+            console.warn(`position error code: ${err.code} - message: ${err.message}`);
         }
     </script>
 
 </head>
 
 <body>
-
-    <% 
-
-    function isSummerTime() {
-        let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
-        let month = date.getMonth() + 1;
-        return month >= 5 && month <= 9;
-    }
-
-    function isWinterTime() {
-        return !isSummerTime();
-    }
-
-    function isEarlyHours() {
-        let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
-        let hour = date.getHours(); // 0..23
-        return hour < 8; // between midnight and 7:59
-    }
-
-    function isEvening() {
-        let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
-        let hour = date.getHours(); // 0..23
-        return hour >= 19; // between 19:00 and 23:59
-    }
-
-    let dateFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
-
-    let now = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
-    let nextDay = new Date();
-    nextDay.setDate(now.getDate() + 1);
-    let previousDay = new Date();
-    previousDay.setDate(now.getDate() - 1);
-
-    let today = now.toLocaleDateString("el-CY", dateFormatOptions);
-    let tomorrow = nextDay.toLocaleDateString("el-CY", dateFormatOptions);
-    let yesterday = previousDay.toLocaleDateString("el-CY", dateFormatOptions);
-
-    labelNow = `Διημερεύουν απόψε, ${today}`;
-    if(isEvening()) {
-        labelNow = `Διημερεύουν απόψε, ${today}`;
-    } else if(isEarlyHours()) {
-        labelNow = `Διημερεύουν σήμερα, ${yesterday}, μέχρι τις 8 το επόμενο πρωί`;
-    } else {
-        labelNow = `Διημερεύουν σήμερα, ${today}, μέχρι τις 8 το επόμενο πρωί`;
-    }
-
-    labelNextDay = `Διημερεύουν αύριο, ${tomorrow}`;
-    if(isEarlyHours()) {
-        labelNextDay = `Διημερεύουν αύριο, ${today}`;
-    } else {
-        labelNextDay = `Διημερεύουν αύριο, ${tomorrow}`;
-    }
-
-    labelAll = 'Όλα τα φαρμακεία';
-
-    %> 
 
     <nav class="navbar sticky-top navbar-light m-md-3 bg-light">
         <nav-item class="m-4">
@@ -93,65 +42,14 @@
                 <p id="pharmacies_label"> <%= labelNow %> </p>
             </div>
         </div>
-        <nav-item id="hoursLink" class="w-100"> <a href="#"> <i class="fa-solid fa-clock"></i> <strong> Ωράριο <i class="fa-solid fa-caret-down"></i> </strong> </a> </nav-item>
-        <div class="container d-none" id="hoursContent">
-            <div class="card m-4 mx-auto">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fa-solid fa-sun" style="color: yellow; background-color: deepskyblue; padding: 10px;"></i> Summer Period
-                        <% 
-                        if(isSummerTime()) {
-                        %> 
-                        <i class="fa-solid fa-check" style="color: green;"></i>
-                        <% 
-                        }
-                        %> 
-                    </h5>
-                    <h6 class="card-subtitle mb-2 text-muted">May 1st to Sep 30th</h6>
-                    <p class="card-text"><pre>
-Mon: 9:00-1:30 & 4:00-7:30
-Tue: 9:00-1:30 & 4:00-7:30
-Wed: 9:00-1:30
-Thu: 9:00-1:30 & 4:00-7:30
-Fri: 9:00-1:30 & 4:00-7:30
-Sat: 9:00-1:30
-Sun: closed
-
-On call pharmacies open 8am to 11pm.
-Call ahead for service after 11pm.</pre></p>
-                </div>
-            </div>
-            <div class="card m-4 mx-auto">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fa-solid fa-cloud" style="color: white; background-color: deepskyblue; padding: 10px;"></i> Winter Period
-                        <% 
-                        if(isWinterTime()) {
-                        %> 
-                        <i class="fa-solid fa-check" style="color: green;"></i>
-                        <% 
-                        }
-                        %> 
-
-                    </h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Oct 1st to Apr 30th</h6>
-                    <p class="card-text"><pre>
-Mon: 9:00-1:30 & 3:00-6:30
-Tue: 9:00-1:30 & 3:00-6:30
-Wed: 9:00-1:30
-Thu: 9:00-1:30 & 3:00-6:30
-Fri: 9:00-1:30 & 3:00-6:30
-Sat: 9:00-1:30
-Sun: closed
-
-On call pharmacies open 8am to 10pm.
-Call ahead for service after 10pm.</pre></p>
-                </div>
-            </div>
-        </div>
-
+        <button type="button" class="btn btn-link" style="color: green;" data-toggle="modal" data-target="#workingHoursModal">
+            <i class="fa-solid fa-clock"></i> Ωράριο
+        </button>
+        
     </nav>
-    
+
+    <%- include('../partials/working_hours'); %>
+
     <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 bg-light">
 
         <div>
@@ -205,6 +103,8 @@ Call ahead for service after 10pm.</pre></p>
         $('.insideLink').click(function(event){
             event.stopImmediatePropagation();
         });
+
+        $('#workingHoursModal').appendTo("body") 
     </script>
 
 </body>

@@ -1,0 +1,135 @@
+<% 
+
+function isSummerTime() {
+    let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
+    let month = date.getMonth() + 1;
+    return month >= 5 && month <= 9;
+}
+
+function isWinterTime() {
+    return !isSummerTime();
+}
+
+function isEarlyHours() {
+    let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
+    let hour = date.getHours(); // 0..23
+    return hour < 8; // between midnight and 7:59
+}
+
+function isEvening() {
+    let date = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
+    let hour = date.getHours(); // 0..23
+    return hour >= 19; // between 19:00 and 23:59
+}
+
+let dateFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
+
+let now = new Date(new Date().toLocaleString("en-US", {timeZone: 'Asia/Nicosia'})); 
+let nextDay = new Date();
+nextDay.setDate(now.getDate() + 1);
+let previousDay = new Date();
+previousDay.setDate(now.getDate() - 1);
+
+let today = now.toLocaleDateString("el-CY", dateFormatOptions);
+let tomorrow = nextDay.toLocaleDateString("el-CY", dateFormatOptions);
+let yesterday = previousDay.toLocaleDateString("el-CY", dateFormatOptions);
+
+labelNow = `Διημερεύουν απόψε, ${today}`;
+if(isEvening()) {
+    labelNow = `Διημερεύουν απόψε, ${today}`;
+} else if(isEarlyHours()) {
+    labelNow = `Διημερεύουν σήμερα, ${yesterday}, μέχρι τις 8 το επόμενο πρωί`;
+} else {
+    labelNow = `Διημερεύουν σήμερα, ${today}, μέχρι τις 8 το επόμενο πρωί`;
+}
+
+labelNextDay = `Διημερεύουν αύριο, ${tomorrow}`;
+if(isEarlyHours()) {
+    labelNextDay = `Διημερεύουν αύριο, ${today}`;
+} else {
+    labelNextDay = `Διημερεύουν αύριο, ${tomorrow}`;
+}
+
+labelAll = 'Όλα τα φαρμακεία';
+
+%> 
+
+
+<!-- Modal -->
+<div class="modal fade" id="workingHoursModal" tabindex="-1" role="dialog" aria-labelledby="workingHoursModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="workingHoursModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <div class="card m-4 mx-auto">
+                <div class="card-body">
+                    <% 
+                    if(isSummerTime()) {
+                    %> 
+                    <span class="d-inline-block btn float-right">
+                        <i class="fa-solid fa-check h1" style="color: green;"></i>
+                    </span>
+                    <% 
+                    }
+                    %> 
+                    <h5 class="card-title">
+                        <i class="fa-solid fa-sun" style="color: yellow; background-color: deepskyblue; padding: 10px;"></i> Summer Period
+                    </h5>
+                    <h6 class="card-subtitle mb-2 text-muted">May 1st to Sep 30th</h6>
+                    <p class="card-text text-monospace">
+                        Mon: 9:00-1:30 & 4:00-7:30<br>
+                        Tue: 9:00-1:30 & 4:00-7:30<br>
+                        Wed: 9:00-1:30<br>
+                        Thu: 9:00-1:30 & 4:00-7:30<br>
+                        Fri: 9:00-1:30 & 4:00-7:30<br>
+                        Sat: 9:00-1:30<br>
+                        Sun: closed<br>
+                        <br>
+                        On call pharmacies open 8am to 11pm.<br>
+                        Call ahead for service after 11pm.
+                    </p>
+            </div>
+            </div>
+            <div class="card m-4 mx-auto">
+                <div class="card-body">
+                    <% 
+                    if(isWinterTime()) {
+                    %> 
+                    <span class="d-inline-block btn float-right">
+                        <i class="fa-solid fa-check h1" style="color: green;"></i>
+                    </span>
+                    <% 
+                    }
+                    %>
+                    <h5 class="card-title">
+                        <i class="fa-solid fa-cloud" style="color: white; background-color: deepskyblue; padding: 10px;"></i> Winter Period
+                    </h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Oct 1st to Apr 30th</h6>
+                    <p class="card-text text-monospace">
+                        Mon: 9:00-1:30 & 3:00-6:30<br>
+                        Tue: 9:00-1:30 & 3:00-6:30<br>
+                        Wed: 9:00-1:30<br>
+                        Thu: 9:00-1:30 & 3:00-6:30<br>
+                        Fri: 9:00-1:30 & 3:00-6:30<br>
+                        Sat: 9:00-1:30<br>
+                        Sun: closed<br>
+                        <br>
+                        On call pharmacies open 8am to 10pm.<br>
+                        Call ahead for service after 10pm.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
