@@ -20,6 +20,26 @@
 
 <body>
 
+    <% 
+    labelNow = `Διημερεύουν απόψε, ${today}`;
+    if(isEvening()) {
+        labelNow = `Διημερεύουν απόψε, ${today}`;
+    } else if(isEarlyHours()) {
+        labelNow = `Διημερεύουν σήμερα, ${yesterday}, μέχρι τις 8 το επόμενο πρωί`;
+    } else {
+        labelNow = `Διημερεύουν σήμερα, ${today}, μέχρι τις 8 το επόμενο πρωί`;
+    }
+
+    labelNextDay = `Διημερεύουν αύριο, ${tomorrow}`;
+    if(isEarlyHours()) {
+        labelNextDay = `Διημερεύουν αύριο, ${today}`;
+    } else {
+        labelNextDay = `Διημερεύουν αύριο, ${tomorrow}`;
+    }
+
+    labelAll = 'Όλα τα φαρμακεία';
+    %>
+
     <nav class="navbar sticky-top navbar-light m-md-3 bg-light">
         <nav-item class="m-4">
             <h3> <img src="/cpg.png" width="32"/> Cyprus Pharmacy Guide </h3>

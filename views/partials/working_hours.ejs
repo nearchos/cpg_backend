@@ -34,24 +34,6 @@ let today = now.toLocaleDateString("el-CY", dateFormatOptions);
 let tomorrow = nextDay.toLocaleDateString("el-CY", dateFormatOptions);
 let yesterday = previousDay.toLocaleDateString("el-CY", dateFormatOptions);
 
-labelNow = `Διημερεύουν απόψε, ${today}`;
-if(isEvening()) {
-    labelNow = `Διημερεύουν απόψε, ${today}`;
-} else if(isEarlyHours()) {
-    labelNow = `Διημερεύουν σήμερα, ${yesterday}, μέχρι τις 8 το επόμενο πρωί`;
-} else {
-    labelNow = `Διημερεύουν σήμερα, ${today}, μέχρι τις 8 το επόμενο πρωί`;
-}
-
-labelNextDay = `Διημερεύουν αύριο, ${tomorrow}`;
-if(isEarlyHours()) {
-    labelNextDay = `Διημερεύουν αύριο, ${today}`;
-} else {
-    labelNextDay = `Διημερεύουν αύριο, ${tomorrow}`;
-}
-
-labelAll = 'Όλα τα φαρμακεία';
-
 %> 
 
 
