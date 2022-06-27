@@ -98,14 +98,17 @@ app.get('/callback', function(req, res) {
 });
 
 app.get('/admin', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
     res.render('pages/admin/admin', { req: req });
 });
 
 app.get('/admin/upload', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
     res.render('pages/admin/upload', { req: req });
 });
 
 app.post('/admin/handle-json', function(req, res) {
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
     const json = req.body;
     try {
         if(json.status == 'ok') {
