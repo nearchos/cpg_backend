@@ -1,18 +1,14 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-console.log(`process.env.DATABASE_URL: ${process.env.DATABASE_URL}`);
 
 let production = process.env.DEVELOPMENT_OR_PRODUCTION==='production';
-if(production) {
-
-}
+console.log(`production: ${production}`);
 const sequelize = production ?
     new Sequelize(process.env.DATABASE_URL, {
+        dialect: "postgres",
+        ssl: true,
         dialectOptions: {
-            ssl: {
-              require: true,
-              rejectUnauthorized: false
-            }
+            ssl: true
         }
     })
     :
