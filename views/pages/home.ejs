@@ -1,32 +1,11 @@
+<!DOCTYPE html>
 <html>
 
 <head>
     <%- include('../partials/head'); %>
-
-    <script>
-
-        function sortByLocation() {
-            if(navigator.geolocation) {
-                console.log(`start listening to position updates ...`);
-                navigator.geolocation.watchPosition(updatePosition, error);
-            } else {
-                console.error(`Geolocation not available`);
-            }
-        }
-
-        var geoPosition;
-        function updatePosition(position) {
-            console.log(`position: ${JSON.stringify(position)}`);
-        }
-
-        function error(err) {
-            console.warn(`position error code: ${err.code} - message: ${err.message}`);
-        }
-    </script>
-
 </head>
 
-<body onload="sortByLocation()">
+<body>
 
     <% 
     function isEarlyHours() {
@@ -94,9 +73,6 @@
                 <p id="pharmacies_label"> <%= labelNow %> </p>
             </div>
         </div>
-        <button type="button" class="btn btn-link" style="color: green;" onclick="sortByLocation()">
-            <i class="fa-solid fa-map"></i> Sort by location
-        </button>
 
         <button type="button" class="btn btn-link" style="color: green;" data-toggle="modal" data-target="#workingHoursModal">
             <i class="fa-solid fa-clock"></i> Ωράριο
