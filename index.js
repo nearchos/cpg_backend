@@ -70,6 +70,7 @@ app.get('/api/sync', async (req, res) => { // handle GET requests at '/sync'
     const from = req.query.from;
     let authorized = magic === process.env.magic;
     res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     if(authorized) {
         f = parseInt(from) || 0;
         if(f >= 0) {
