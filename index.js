@@ -215,7 +215,7 @@ app.get('/admin/pharmacies', function(req, res) {
                 .findAll()
                 .then(localities => {
                     Pharmacy
-                        .findAll()
+                        .findAll({order: [['id', 'ASC']]})
                         .then(pharmacies => res.render('pages/admin/pharmacies', { req: req, cities: cities, localities: localities, pharmacies: pharmacies, showInactive: showInactive }))
                 })
         })
@@ -272,6 +272,17 @@ app.get('/admin/oncalls', function(req, res) {
     if(!req.oidc.isAuthenticated()) res.redirect('/login');
     OnCalls
         .findAll({order: [['date', 'ASC']]})
+        .then(oncalls => res.render('pages/admin/oncalls', { req: req, oncalls: oncalls }))
+        .catch(error => res.status(500).send(`server error: ${error}`));
+});
+
+app.get('/admin/oncalls-upcoming', function(req, res) {
+    const { Op } = require("sequelize");
+    if(!req.oidc.isAuthenticated()) res.redirect('/login');
+    const currentDate = getToday();
+    console.log(`currentDate: ${currentDate}`);
+    OnCalls
+        .findAll({where: { 'date': {[Op.gte]: currentDate }}, order: [['date', 'ASC']]})
         .then(oncalls => res.render('pages/admin/oncalls', { req: req, oncalls: oncalls }))
         .catch(error => res.status(500).send(`server error: ${error}`));
 });
